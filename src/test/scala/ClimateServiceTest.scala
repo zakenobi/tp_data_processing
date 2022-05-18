@@ -11,17 +11,26 @@ class ClimateServiceTest extends AnyFunSuite {
   test("isClimateRelated - climate related words should return true") {
     assert(ClimateService.isClimateRelated("climate change"))
     assert(ClimateService.isClimateRelated("IPCC"))
+    assert(ClimateService.isClimateRelated("global warming"))
   }
 
   //@TODO
   test("parseRawData") {
-    val list1 = List((2003, 1, 355.2), (2004, 1, 375.2))
-    val output = List(CO2Record(2003, 1, 355.2), CO2Record(2004, 1, 375.2))
+    val list1 = List((2003, 1, 355.2), (2004, 1, 375.2), (2004, 1, -375.2))
+    val output = List(Some(CO2Record(2003, 1, 355.2)), Some(CO2Record(2004, 1, 375.2)), None)
     assert(ClimateService.parseRawData(list1) == output)
   }
 
   //@TODO
   test("filterDecemberData") {
-    assert(true == false)
+    val list1 = List(Some(CO2Record(2003, 1, 355.2)), Some(CO2Record(2004, 12, 375.2)))
+    val output = List(CO2Record(2003, 1, 355.2))
+    assert(ClimateService.filterDecemberData(list1) == output)
+  }
+
+  test("filterDecemberDataNone") {
+    val list1 = List(Some(CO2Record(2003, 1, 355.2)), Some(CO2Record(2004, 12, 375.2)), None)
+    val output = List(CO2Record(2003, 1, 355.2))
+    assert(ClimateService.filterDecemberData(list1) == output)
   }
 }

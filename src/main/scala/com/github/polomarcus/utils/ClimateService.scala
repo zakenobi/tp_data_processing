@@ -16,7 +16,10 @@ object ClimateService {
    * @param description "my awesome sentence contains a key word like climate change"
    * @return Boolean True
    */
-  def isClimateRelated(description: String): Boolean = ???
+  def isClimateRelated(description: String): Boolean = {
+    val climateRelatedWords = List("global warming", "IPCC", "climate change")
+    climateRelatedWords.exists(description.contains(_))
+  }
 
   /**
    * parse a list of raw data and transport it with type into a list of CO2Record
@@ -26,8 +29,19 @@ object ClimateService {
    * you can access to Tuple with myTuple._1, myTuple._2, myTuple._3
    */
   def parseRawData(list: List[(Int, Int, Double)]) : List[Option[CO2Record]] = {
-    list.map { record => ??? }
-    ???
+    list.map { record => {
+      val year = record._1
+      val month = record._2
+      val ppm = record._3
+      // create instance of CO2Record
+      val co2Record = CO2Record(year, month, ppm)
+      if (co2Record.isValidPpmValue) {
+        Some(co2Record)
+      } else {
+        None
+      }
+    }
+    }
   }
 
   /**
@@ -36,7 +50,13 @@ object ClimateService {
    * @param list
    * @return a list
    */
-  def filterDecemberData(list: List[Option[CO2Record]]) : List[CO2Record] = ???
+  def filterDecemberData(list: List[Option[CO2Record]]) : List[CO2Record] = 
+  {
+    list.filter(record => record match{
+      case Some(record) => record.month != 12
+      case None => false
+    }).flatten
+  }
 
   /**
    * display every item on the list using the CO2Record's "show" function
